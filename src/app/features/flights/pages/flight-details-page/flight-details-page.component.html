@@ -1,0 +1,145 @@
+<div class="container details">
+  <button mat-button type="button" class="details__back" (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+    Back to results
+  </button>
+
+  @let result = state();
+  @if (result.status === 'loading') {
+    <app-loader message="Loading flight details…" />
+  } @else if (result.status === 'error') {
+    @if (result.error.kind === 'not-found') {
+      <app-error-message
+        title="Flight not found"
+        message="This flight is no longer available. It may have been removed from the schedule."
+        [retryable]="false"
+      >
+        <a mat-stroked-button routerLink="/search">New search</a>
+      </app-error-message>
+    } @else {
+      <app-error-message title="We couldn't load this flight" [message]="result.error.message" (retry)="onRetry()" />
+    }
+  } @else {
+    @let flight = result.data;
+    @let origin = airport(flight.origin);
+    @let destination = airport(flight.destination);
+
+    <header class="details__header">
+      <span class="details__logo" aria-hidden="true">{{ flight.airline.code }}</span>
+      <div>
+        <h1 class="details__title">
+          {{ origin?.city ?? flight.origin }} → {{ destination?.city ?? flight.destination }}
+        </h1>
+        <p class="details__subtitle">
+          {{ flight.airline.name }} · {{ flight.flightNumber }} · {{ flight.departureTime | date: 'EEEE, d MMMM y' }}
+        </p>
+      </div>
+    </header>
+
+    <div class="details__layout">
+      <section class="panel" aria-labelledby="itinerary-heading">
+        <h2 id="itinerary-heading" class="details__section-title">Itinerary</h2>
+
+        <ol class="timeline">
+          <li class="timeline__stop">
+            <time class="timeline__time">{{ flight.departureTime | date: 'HH:mm' }}</time>
+            <div>
+              <div class="timeline__place">{{ origin?.city ?? flight.origin }} ({{ flight.origin }})</div>
+              <div class="timeline__sub">{{ origin?.name }}</div>
+            </div>
+          </li>
+
+          @for (layover of flight.layovers; track layover.airport) {
+            <li class="timeline__stop timeline__stop--layover">
+              <span class="timeline__time"></span>
+              <div>
+                <div class="timeline__place">
+                  Layover in {{ airport(layover.airport)?.city ?? layover.airport }} ({{ layover.airport }})
+                </div>
+                <div class="timeline__sub">{{ layover.durationMinutes | duration }} connection</div>
+              </div>
+            </li>
+          }
+
+          <li class="timeline__stop">
+            <time class="timeline__time">{{ flight.arrivalTime | date: 'HH:mm' }}</time>
+            <div>
+              <div class="timeline__place">
+                {{ destination?.city ?? flight.destination }} ({{ flight.destination }})
+              </div>
+              <div class="timeline__sub">
+                {{ destination?.name }}
+                @if (flight.arrivalTime.getDate() !== flight.departureTime.getDate()) {
+                  · arrives {{ flight.arrivalTime | date: 'EEE, d MMM' }}
+                }
+              </div>
+            </div>
+          </li>
+        </ol>
+
+        <dl class="facts">
+          <div>
+            <dt>Total duration</dt>
+            <dd>{{ flight.durationMinutes | duration }}</dd>
+          </div>
+          <div>
+            <dt>Stops</dt>
+            <dd>{{ flight.stops | stops }}</dd>
+          </div>
+          <div>
+            <dt>Aircraft</dt>
+            <dd>{{ flight.aircraft }}</dd>
+          </div>
+          <div>
+            <dt>Cabin</dt>
+            <dd>{{ flight.cabinClass }}</dd>
+          </div>
+          <div>
+            <dt>Cabin baggage</dt>
+            <dd>{{ flight.baggage.cabinKg }} kg</dd>
+          </div>
+          <div>
+            <dt>Checked baggage</dt>
+            <dd>{{ flight.baggage.checkedKg }} kg</dd>
+          </div>
+          <div>
+            <dt>Fare type</dt>
+            <dd>{{ flight.refundable ? 'Refundable' : 'Non-refundable' }}</dd>
+          </div>
+          <div>
+            <dt>Seats left</dt>
+            <dd>{{ flight.seatsAvailable }}</dd>
+          </div>
+        </dl>
+
+        @if (flight.amenities.length) {
+          <h3 class="details__section-title details__section-title--small">Amenities</h3>
+          <ul class="amenities">
+            @for (amenity of flight.amenities; track amenity) {
+              <li class="amenities__item">{{ amenity }}</li>
+            }
+          </ul>
+        }
+      </section>
+
+      <aside class="panel fare" aria-labelledby="fare-heading">
+        <h2 id="fare-heading" class="details__section-title">Fare summary</h2>
+        <dl class="fare__rows">
+          <div>
+            <dt>Fare per traveller</dt>
+            <dd>{{ flight.price | currency: flight.currency : 'symbol' : '1.0-0' }}</dd>
+          </div>
+          <div>
+            <dt>Travellers</dt>
+            <dd>× {{ passengers() }}</dd>
+          </div>
+          <div class="fare__total">
+            <dt>Total</dt>
+            <dd>{{ totalPrice() | currency: flight.currency : 'symbol' : '1.0-0' }}</dd>
+          </div>
+        </dl>
+        <p class="fare__note">Prices include taxes and fees. Booking is out of scope for this demo.</p>
+      </aside>
+    </div>
+  }
+</div>

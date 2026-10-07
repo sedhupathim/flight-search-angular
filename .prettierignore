@@ -1,0 +1,4 @@
+dist
+node_modules
+.angular
+mock-api/db.json

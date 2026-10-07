@@ -1,0 +1,144 @@
+:host {
+  display: block;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) minmax(240px, 2fr) auto auto;
+  align-items: center;
+  gap: 16px 24px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--flight-card-border, var(--app-border));
+  box-shadow: var(--flight-card-shadow, none);
+  background: var(--app-surface);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+
+  &__airline {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__logo {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--app-primary);
+    background: var(--app-primary-soft);
+  }
+
+  &__airline-name {
+    font-weight: 500;
+  }
+
+  &__flight-number,
+  &__per,
+  &__duration,
+  &__code {
+    font-size: 0.8rem;
+    color: var(--app-text-muted);
+  }
+
+  &__schedule {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__point {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &__time {
+    font-size: 1.25rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__day-offset {
+    font-size: 0.7rem;
+    color: var(--app-warn);
+  }
+
+  &__route {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 90px;
+  }
+
+  &__line {
+    position: relative;
+    width: 100%;
+    height: 2px;
+    background: var(--app-border-strong);
+
+    &--stops::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: -3px;
+      width: 8px;
+      height: 8px;
+      margin-left: -4px;
+      border-radius: 50%;
+      background: var(--app-warn);
+    }
+  }
+
+  &__stops {
+    font-size: 0.8rem;
+    color: var(--app-warn);
+
+    &--direct {
+      color: var(--app-success);
+    }
+  }
+
+  &__price {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  &__amount {
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+
+  &__seats {
+    font-size: 0.75rem;
+    color: var(--app-error);
+  }
+
+  &__chevron {
+    color: var(--app-text-muted);
+  }
+}
+
+@media (max-width: 720px) {
+  .card {
+    grid-template-columns: 1fr auto;
+    padding: 14px 16px;
+
+    &__schedule {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+
+    &__chevron {
+      display: none;
+    }
+  }
+}

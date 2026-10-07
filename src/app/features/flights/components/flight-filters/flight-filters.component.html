@@ -1,0 +1,58 @@
+<form class="filters" [formGroup]="form" aria-label="Filter flights">
+  <div class="filters__header">
+    <h2 class="filters__title">Filters</h2>
+    <button mat-button type="button" (click)="onReset()">Reset</button>
+  </div>
+
+  <section class="filters__section">
+    <h3 class="filters__label" id="sort-label">Sort by</h3>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="filters__full">
+      <mat-select formControlName="sortBy" aria-labelledby="sort-label">
+        @for (option of sortOptions; track option.value) {
+          <mat-option [value]="option.value">{{ option.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </section>
+
+  <section class="filters__section">
+    <h3 class="filters__label" id="price-label">
+      Max price
+      <span class="filters__value">{{ form.controls.maxPrice.value | currency: currency() : 'symbol' : '1.0-0' }}</span>
+    </h3>
+    <mat-slider
+      class="filters__full"
+      [min]="sliderMin"
+      [max]="sliderMax"
+      [step]="priceStep"
+      [disabled]="sliderMin >= sliderMax"
+    >
+      <input matSliderThumb formControlName="maxPrice" aria-labelledby="price-label" />
+    </mat-slider>
+  </section>
+
+  <section class="filters__section">
+    <h3 class="filters__label" id="stops-label">Stops</h3>
+    <mat-button-toggle-group formControlName="stops" multiple aria-labelledby="stops-label" class="filters__stops">
+      @for (option of stopOptions; track option.value) {
+        <mat-button-toggle [value]="option.value">{{ option.label }}</mat-button-toggle>
+      }
+    </mat-button-toggle-group>
+  </section>
+
+  <section class="filters__section">
+    <h3 class="filters__label">Airlines</h3>
+    <div class="filters__airlines" role="group" aria-label="Airlines">
+      @for (airline of options().airlines; track airline.code) {
+        <mat-checkbox
+          [checked]="form.controls.airlines.value.includes(airline.code)"
+          (change)="toggleAirline(airline.code, $event.checked)"
+        >
+          {{ airline.name }}
+        </mat-checkbox>
+      } @empty {
+        <span class="filters__hint">No airlines available</span>
+      }
+    </div>
+  </section>
+</form>

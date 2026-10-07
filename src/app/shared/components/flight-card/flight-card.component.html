@@ -1,0 +1,47 @@
+@let f = flight();
+<article class="card">
+  <div class="card__airline">
+    <span class="card__logo" aria-hidden="true">{{ f.airline.code }}</span>
+    <div>
+      <div class="card__airline-name">{{ f.airline.name }}</div>
+      <div class="card__flight-number">{{ f.flightNumber }}</div>
+    </div>
+  </div>
+
+  <div class="card__schedule">
+    <div class="card__point">
+      <time class="card__time" [attr.datetime]="f.departureTime.toISOString()">{{
+        f.departureTime | date: 'HH:mm'
+      }}</time>
+      <span class="card__code">{{ f.origin }}</span>
+    </div>
+
+    <div class="card__route" aria-hidden="true">
+      <span class="card__duration">{{ f.durationMinutes | duration }}</span>
+      <span class="card__line" [class.card__line--stops]="f.stops > 0"></span>
+      <span class="card__stops" [class.card__stops--direct]="f.stops === 0">{{ f.stops | stops }}</span>
+    </div>
+
+    <div class="card__point">
+      <time class="card__time" [attr.datetime]="f.arrivalTime.toISOString()">
+        {{ f.arrivalTime | date: 'HH:mm' }}
+        @if (dayOffset() > 0) {
+          <sup class="card__day-offset" title="Arrives {{ dayOffset() }} day(s) later">+{{ dayOffset() }}</sup>
+        }
+      </time>
+      <span class="card__code">{{ f.destination }}</span>
+    </div>
+  </div>
+
+  <span class="visually-hidden"> Duration {{ f.durationMinutes | duration }}, {{ f.stops | stops }}. </span>
+
+  <div class="card__price">
+    <span class="card__amount">{{ f.price | currency: f.currency : 'symbol' : '1.0-0' }}</span>
+    <span class="card__per">per traveller</span>
+    @if (f.seatsAvailable <= 5) {
+      <span class="card__seats">Only {{ f.seatsAvailable }} left</span>
+    }
+  </div>
+
+  <mat-icon class="card__chevron" aria-hidden="true">chevron_right</mat-icon>
+</article>

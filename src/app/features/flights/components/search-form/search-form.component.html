@@ -1,0 +1,137 @@
+<form class="search" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+  <mat-button-toggle-group
+    class="search__trip"
+    formControlName="tripType"
+    aria-label="Trip type"
+    hideSingleSelectionIndicator
+  >
+    <mat-button-toggle value="round">Round trip</mat-button-toggle>
+    <mat-button-toggle value="oneway">One way</mat-button-toggle>
+  </mat-button-toggle-group>
+
+  <div class="search__grid">
+    <div class="search__airports">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>From</mat-label>
+        <mat-icon matPrefix>flight_takeoff</mat-icon>
+        <input
+          matInput
+          formControlName="from"
+          [matAutocomplete]="fromAuto"
+          placeholder="City or airport code"
+          autocomplete="off"
+        />
+        <mat-autocomplete #fromAuto="matAutocomplete" autoActiveFirstOption panelWidth="320px">
+          @for (airport of fromOptions(); track airport.code) {
+            <mat-option [value]="airport.code">
+              <strong>{{ airportLabel(airport) }}</strong>
+              <small class="search__option-name">{{ airport.name }}</small>
+            </mat-option>
+          }
+        </mat-autocomplete>
+        @if (form.controls.from.hasError('required')) {
+          <mat-error>Origin is required</mat-error>
+        } @else if (form.controls.from.hasError('airportCode')) {
+          <mat-error>Select an airport from the list (3-letter code)</mat-error>
+        }
+      </mat-form-field>
+
+      <button
+        mat-icon-button
+        type="button"
+        class="search__swap"
+        (click)="swapAirports()"
+        aria-label="Swap origin and destination"
+      >
+        <mat-icon>swap_horiz</mat-icon>
+      </button>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>To</mat-label>
+        <mat-icon matPrefix>flight_land</mat-icon>
+        <input
+          matInput
+          formControlName="to"
+          [matAutocomplete]="toAuto"
+          [errorStateMatcher]="sameAirportsMatcher"
+          placeholder="City or airport code"
+          autocomplete="off"
+        />
+        <mat-autocomplete #toAuto="matAutocomplete" autoActiveFirstOption panelWidth="320px">
+          @for (airport of toOptions(); track airport.code) {
+            <mat-option [value]="airport.code">
+              <strong>{{ airportLabel(airport) }}</strong>
+              <small class="search__option-name">{{ airport.name }}</small>
+            </mat-option>
+          }
+        </mat-autocomplete>
+        @if (form.controls.to.hasError('required')) {
+          <mat-error>Destination is required</mat-error>
+        } @else if (form.controls.to.hasError('airportCode')) {
+          <mat-error>Select an airport from the list (3-letter code)</mat-error>
+        } @else if (form.hasError('sameAirports')) {
+          <mat-error>Destination must be different from origin</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Departure date</mat-label>
+      <input
+        matInput
+        formControlName="departureDate"
+        [matDatepicker]="departurePicker"
+        [min]="today"
+        placeholder="MM/DD/YYYY"
+      />
+      <mat-datepicker-toggle matIconSuffix [for]="departurePicker" />
+      <mat-datepicker #departurePicker />
+      @if (form.controls.departureDate.hasError('matDatepickerParse')) {
+        <mat-error>Enter a valid date</mat-error>
+      } @else if (form.controls.departureDate.hasError('required')) {
+        <mat-error>Departure date is required</mat-error>
+      } @else if (
+        form.controls.departureDate.hasError('pastDate') || form.controls.departureDate.hasError('matDatepickerMin')
+      ) {
+        <mat-error>Departure date cannot be in the past</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Return date</mat-label>
+      <input
+        matInput
+        formControlName="returnDate"
+        [matDatepicker]="returnPicker"
+        [min]="minReturnDate()"
+        [errorStateMatcher]="dateRangeMatcher"
+        [placeholder]="isRoundTrip ? 'MM/DD/YYYY' : 'One way'"
+      />
+      <mat-datepicker-toggle matIconSuffix [for]="returnPicker" />
+      <mat-datepicker #returnPicker />
+      @if (form.controls.returnDate.hasError('matDatepickerParse')) {
+        <mat-error>Enter a valid date</mat-error>
+      } @else if (form.controls.returnDate.hasError('required')) {
+        <mat-error>Return date is required for round trips</mat-error>
+      } @else if (form.hasError('returnBeforeDeparture') || form.controls.returnDate.hasError('matDatepickerMin')) {
+        <mat-error>Return date cannot be before departure</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search__passengers">
+      <mat-label>Passengers</mat-label>
+      <mat-icon matPrefix>person</mat-icon>
+      <input matInput type="number" formControlName="passengers" [min]="minPassengers" [max]="maxPassengers" step="1" />
+      @if (form.controls.passengers.hasError('required')) {
+        <mat-error>Required</mat-error>
+      } @else if (form.controls.passengers.hasError('min') || form.controls.passengers.hasError('max')) {
+        <mat-error>Between {{ minPassengers }} and {{ maxPassengers }}</mat-error>
+      }
+    </mat-form-field>
+
+    <button mat-flat-button color="primary" type="submit" class="search__submit">
+      <mat-icon>search</mat-icon>
+      Search flights
+    </button>
+  </div>
+</form>

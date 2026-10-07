@@ -1,0 +1,76 @@
+@let search = criteria();
+
+<section class="search-bar">
+  <div class="container">
+    <app-search-form [initialCriteria]="search" (search)="onSearch($event)" />
+  </div>
+</section>
+
+<div class="container results">
+  @if (search) {
+    <header class="results__header">
+      <h1 class="results__title">
+        {{ search.from }} → {{ search.to }}
+        @if (search.returnDate) {
+          <span class="results__trip">· Round trip</span>
+        }
+      </h1>
+      <p class="results__meta">
+        {{ departureDate() | date: 'EEE, d MMM y' }}
+        @if (returnDate(); as returning) {
+          – {{ returning | date: 'EEE, d MMM y' }}
+        }
+        · {{ search.passengers }} {{ search.passengers === 1 ? 'traveller' : 'travellers' }}
+      </p>
+    </header>
+
+    @let result = state();
+    @if (result.status === 'loading') {
+      <app-loader message="Searching for the best flights…" />
+    } @else if (result.status === 'error') {
+      <app-error-message title="We couldn't load flights" [message]="result.error.message" (retry)="onRetry()" />
+    } @else {
+      <div class="results__layout">
+        @if (filterOptions(); as options) {
+          <aside class="results__filters">
+            <app-flight-filters [options]="options" (filtersChange)="filters.set($event)" />
+          </aside>
+        }
+
+        <section class="results__list" aria-label="Flight results">
+          @if (search.returnDate) {
+            <mat-tab-group mat-stretch-tabs="false" animationDuration="0ms">
+              <mat-tab [label]="'Departing · ' + search.from + ' → ' + search.to">
+                <div class="results__tab">
+                  <app-flight-list
+                    [flights]="outbound()"
+                    [totalCount]="result.data.outbound.length"
+                    [travelDate]="search.departureDate"
+                    [passengers]="search.passengers"
+                  />
+                </div>
+              </mat-tab>
+              <mat-tab [label]="'Returning · ' + search.to + ' → ' + search.from">
+                <div class="results__tab">
+                  <app-flight-list
+                    [flights]="inbound()"
+                    [totalCount]="result.data.inbound?.length ?? 0"
+                    [travelDate]="search.returnDate"
+                    [passengers]="search.passengers"
+                  />
+                </div>
+              </mat-tab>
+            </mat-tab-group>
+          } @else {
+            <app-flight-list
+              [flights]="outbound()"
+              [totalCount]="result.data.outbound.length"
+              [travelDate]="search.departureDate"
+              [passengers]="search.passengers"
+            />
+          }
+        </section>
+      </div>
+    }
+  }
+</div>

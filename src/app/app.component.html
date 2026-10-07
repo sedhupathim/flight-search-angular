@@ -1,0 +1,18 @@
+<a class="skip-link" href="#main">Skip to content</a>
+
+<mat-toolbar class="toolbar">
+  <div class="container toolbar__inner">
+    <a routerLink="/search" class="brand" aria-label="SkyFinder home">
+      <mat-icon aria-hidden="true">flight</mat-icon>
+      <span>SkyFinder</span>
+    </a>
+  </div>
+</mat-toolbar>
+
+<main id="main" class="main">
+  <router-outlet />
+</main>
+
+<footer class="footer">
+  <div class="container">© {{ currentYear }} SkyFinder · Demo application with mock flight data</div>
+</footer>

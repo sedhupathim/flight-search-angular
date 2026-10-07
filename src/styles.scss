@@ -1,0 +1,69 @@
+:root {
+  --app-primary: #005cbb;
+  --app-primary-soft: #e3edfb;
+  --app-bg: #f6f8fb;
+  --app-surface: #ffffff;
+  --app-text: #1b1f24;
+  --app-text-muted: #5b6573;
+  --app-border: #e2e6ec;
+  --app-border-strong: #c9d0da;
+  --app-success: #1e7a3c;
+  --app-warn: #b25e00;
+  --app-error: #ba1a1a;
+  --app-error-bg: #fdf1f1;
+  --app-error-border: #f3c7c7;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  color: var(--app-text);
+  background: var(--app-bg);
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.panel {
+  padding: 20px 24px;
+  border-radius: 12px;
+  border: 1px solid var(--app-border);
+  background: var(--app-surface);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  .panel {
+    padding: 16px;
+  }
+}
