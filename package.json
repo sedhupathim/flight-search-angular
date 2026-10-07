@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "concurrently -k -n api,web -c blue,green \"npm:api\" \"npm:serve\"",
-    "serve": "ng serve --proxy-config proxy.conf.json",
+    "serve": "ng serve",
     "api": "json-server --watch mock-api/db.json --routes mock-api/routes.json --port 3000 --delay 700",
     "mock:generate": "node mock-api/generate-db.mjs",
     "build": "ng build",

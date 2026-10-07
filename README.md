@@ -24,7 +24,7 @@ Then open http://localhost:4200.
 | `npm run format`        | Formats code with Prettier                                                |
 | `npm run mock:generate` | Regenerates `mock-api/db.json` (seeded, so the output is always the same) |
 
-> If port 4200 is busy: `npm run api` in one terminal, `npx ng serve --proxy-config proxy.conf.json --port 4300` in another.
+> If port 4200 is busy: `npm run api` in one terminal, `npx ng serve --port 4300` in another. The `/api` proxy is set in `angular.json`, so it applies to any `ng serve`.
 
 ## Technologies
 
