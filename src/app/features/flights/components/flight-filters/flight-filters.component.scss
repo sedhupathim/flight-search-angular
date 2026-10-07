@@ -46,6 +46,13 @@
 
     mat-button-toggle {
       flex: 1;
+      min-width: 0;
+      --mat-standard-button-toggle-label-text-size: 0.85rem;
+    }
+
+    // Tighter label padding so all three options fit the sidebar width.
+    ::ng-deep .mat-button-toggle-label-content {
+      padding: 0 8px;
     }
   }
 

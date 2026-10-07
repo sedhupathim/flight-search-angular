@@ -33,7 +33,13 @@
 
   <section class="filters__section">
     <h3 class="filters__label" id="stops-label">Stops</h3>
-    <mat-button-toggle-group formControlName="stops" multiple aria-labelledby="stops-label" class="filters__stops">
+    <mat-button-toggle-group
+      formControlName="stops"
+      multiple
+      hideMultipleSelectionIndicator
+      aria-labelledby="stops-label"
+      class="filters__stops"
+    >
       @for (option of stopOptions; track option.value) {
         <mat-button-toggle [value]="option.value">{{ option.label }}</mat-button-toggle>
       }
